@@ -60,13 +60,13 @@ function setCellAttrs(node, extraAttrs) {
 //       setDOMAttr:: ?(value: any, attrs: Object)
 //       A function to add the attribute's value to an attribute
 //       object that's used to render the cell's DOM.
-export function tableNodes(options) {
+function tableNodes(options) {
   let extraAttrs = options.cellAttributes || {}
   let cellAttrs = {
     colspan: {default: 1},
     rowspan: {default: 1},
     colwidth: {default: null}
-  }
+  };
   for (let prop in extraAttrs)
     cellAttrs[prop] = {default: extraAttrs[prop].default}
 
@@ -77,31 +77,61 @@ export function tableNodes(options) {
       isolating: true,
       group: options.tableGroup,
       parseDOM: [{tag: "table"}],
-      toDOM() { return ["table", ["tbody", 0]] }
+      toDOM() {
+        return ["table", ["tbody", 0]]
+      }
     },
     table_row: {
-      content: "(table_cell | table_header)*",
+      content: "av_video{1}av_audio{1}|table_header{2}",
       tableRole: "row",
       parseDOM: [{tag: "tr"}],
-      toDOM() { return ["tr", 0] }
+      toDOM() {
+        return ["tr", 0]
+      }
     },
-    table_cell: {
+    av_audio: {
       content: options.cellContent,
-      attrs: cellAttrs,
+      attrs: {class: {default: "audio"}},
       tableRole: "cell",
-      isolating: true,
-      parseDOM: [{tag: "td", getAttrs: dom => getCellAttrs(dom, extraAttrs)}],
-      toDOM(node) { return ["td", setCellAttrs(node, extraAttrs), 0] }
+      group:"celtx",
+      parseDOM: [{
+        tag: "td.audio",
+        getAttrs: dom => Object.assign(getCellAttrs(dom,extraAttrs), {
+        class: dom.getAttribute('class'),
+      })
+    }
+],
+  toDOM: node => ["td", Object.assign({class:"audio"},setCellAttrs(node,extraAttrs)), 0],
+
+},
+
+  av_video: {
+    content: "cxshot+",
+      group:"celtx",
+      attrs: {
+    class: {default: 'video'}
     },
-    table_header: {
-      content: options.cellContent,
+    tableRole: "cell",
+      parseDOM:
+    [{
+      tag: "td.video",
+      getAttrs: dom => Object.assign(getCellAttrs(dom,extraAttrs), {
+      class: dom.getAttribute('class'),
+    })
+  }],
+    toDOM: node => ["td", Object.assign({class:"video"},setCellAttrs(node,extraAttrs)), 0],
+  },
+  table_header: {
+    content: "cxtext+",
       attrs: cellAttrs,
       tableRole: "header_cell",
       isolating: true,
       parseDOM: [{tag: "th", getAttrs: dom => getCellAttrs(dom, extraAttrs)}],
-      toDOM(node) { return ["th", setCellAttrs(node, extraAttrs), 0] }
+    toDOM(node) {
+      return ["th", setCellAttrs(node, extraAttrs), 0]
     }
   }
+}
 }
 
 export function tableNodeTypes(schema) {
