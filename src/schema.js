@@ -1,5 +1,5 @@
 // Helper for creating a schema that supports tables.
-
+//edits done here
 function getCellAttrs(dom, extraAttrs) {
   let widthAttr = dom.getAttribute("data-colwidth")
   let widths = widthAttr && /^\d+(,\d+)*$/.test(widthAttr) ? widthAttr.split(",").map(s => Number(s)) : null
