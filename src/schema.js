@@ -60,7 +60,7 @@ function setCellAttrs(node, extraAttrs) {
 //       setDOMAttr:: ?(value: any, attrs: Object)
 //       A function to add the attribute's value to an attribute
 //       object that's used to render the cell's DOM.
-function tableNodes(options) {
+export function tableNodes(options) {
   let extraAttrs = options.cellAttributes || {}
   let cellAttrs = {
     colspan: {default: 1},
